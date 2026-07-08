@@ -1,16 +1,26 @@
 import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
 from app.api import router
 
 # Ensure the data directory exists for SQLite
-os.makedirs("data", exist_ok=True)
+os.makedirs("/app/data", exist_ok=True)
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="OFS Live Bid Tracker API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    from app.scheduler import start_scheduler, shutdown_scheduler
+    start_scheduler()
+    yield
+    # Shutdown
+    shutdown_scheduler()
+
+app = FastAPI(title="OFS Live Bid Tracker API", lifespan=lifespan)
 
 # Add CORS middleware
 app.add_middleware(
@@ -22,12 +32,6 @@ app.add_middleware(
 )
 
 app.include_router(router.api_router, prefix="/api")
-
-@app.on_event("startup")
-async def startup_event():
-    # Initialize scheduler here
-    from app.scheduler import start_scheduler
-    start_scheduler()
 
 @app.get("/")
 def root():

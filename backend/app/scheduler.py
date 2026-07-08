@@ -80,8 +80,18 @@ async def poll_exchanges():
     finally:
         db.close()
 
+_scheduler = None
+
 def start_scheduler():
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(poll_exchanges, 'interval', seconds=settings.POLL_INTERVAL)
-    scheduler.start()
+    global _scheduler
+    _scheduler = AsyncIOScheduler()
+    _scheduler.add_job(poll_exchanges, 'interval', seconds=settings.POLL_INTERVAL)
+    _scheduler.start()
     logger.info(f"Scheduler started with {settings.POLL_INTERVAL} seconds interval.")
+
+def shutdown_scheduler():
+    global _scheduler
+    if _scheduler and _scheduler.running:
+        _scheduler.shutdown(wait=False)
+        logger.info("Scheduler shut down.")
+

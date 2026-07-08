@@ -21,43 +21,45 @@ class NSECollector(BaseCollector):
             "Accept-Language": "en-US,en;q=0.5",
             "Referer": "https://www.nseindia.com/",
         }
-        self.client = httpx.AsyncClient(headers=self.headers, timeout=15.0)
+
 
     async def fetch(self) -> dict:
         results = {}
         now = datetime.now()
         date_str = now.strftime("%d-%b-%Y") # e.g. 07-Jul-2026
         
-        try:
-            # Fetch base URL to get cookies
-            await self.client.get(self.base_url)
-        except Exception as e:
-            logger.error(f"Error fetching NSE base URL for cookies: {e}")
-            
-        for symbol in self.symbols:
-            results[symbol] = {"NON_RETAIL": None, "RETAIL": None}
-            # Non-Retail
+        async with httpx.AsyncClient(headers=self.headers, timeout=15.0) as client:
             try:
-                url_nr = f"https://www.nseindia.com/api/ofs-activeissues-dd?symbol={symbol}&offerdate={date_str}"
-                response_nr = await self.client.get(url_nr)
-                response_nr.raise_for_status()
-                results[symbol]["NON_RETAIL"] = response_nr.json()
+                # Fetch base URL to get cookies
+                await client.get(self.base_url)
             except Exception as e:
-                logger.error(f"Error fetching NSE Non-Retail for {symbol}: {e}")
+                logger.error(f"Error fetching NSE base URL for cookies: {e}")
                 
-            await asyncio.sleep(0.5)
-            
-            # Retail
-            try:
-                url_r = f"https://www.nseindia.com/api/ofs-activeissues-dr?symbol={symbol}&offerdate={date_str}"
-                response_r = await self.client.get(url_r)
-                response_r.raise_for_status()
-                results[symbol]["RETAIL"] = response_r.json()
-            except Exception as e:
-                logger.error(f"Error fetching NSE Retail for {symbol}: {e}")
+            for symbol in self.symbols:
+                results[symbol] = {"NON_RETAIL": None, "RETAIL": None}
+                # Non-Retail
+                try:
+                    url_nr = f"https://www.nseindia.com/api/ofs-activeissues-dd?symbol={symbol}&offerdate={date_str}"
+                    response_nr = await client.get(url_nr)
+                    response_nr.raise_for_status()
+                    results[symbol]["NON_RETAIL"] = response_nr.json()
+                except Exception as e:
+                    logger.error(f"Error fetching NSE Non-Retail for {symbol}: {e}")
+                    
+                await asyncio.sleep(0.5)
                 
-            await asyncio.sleep(0.5)
+                # Retail
+                try:
+                    url_r = f"https://www.nseindia.com/api/ofs-activeissues-dr?symbol={symbol}&offerdate={date_str}"
+                    response_r = await client.get(url_r)
+                    response_r.raise_for_status()
+                    results[symbol]["RETAIL"] = response_r.json()
+                except Exception as e:
+                    logger.error(f"Error fetching NSE Retail for {symbol}: {e}")
+                    
+                await asyncio.sleep(0.5)
         return results
+
 
     def normalize(self, raw_data: dict) -> List[SnapshotBase]:
         snapshots = []

@@ -23,36 +23,37 @@ class BSECollector(BaseCollector):
             "Referer": "https://www.bseindia.com/",
             "Origin": "https://www.bseindia.com"
         }
-        self.client = httpx.AsyncClient(headers=self.headers, timeout=15.0)
+
 
     async def fetch(self) -> dict:
         results = {}
-        for scrip, symbol in self.scripcodes.items():
-            results[scrip] = {"NON_RETAIL": None, "RETAIL": None}
-            
-            # Non-Retail
-            try:
-                params_nr = {"scripcode": scrip, "strflag": "NR"}
-                resp_nr = await self.client.get(self.base_url, params=params_nr)
-                resp_nr.raise_for_status()
-                # Use a basic check to prevent parsing empty/HTML
-                if resp_nr.text.startswith('<'):
-                    raise Exception("Received HTML instead of JSON")
-                results[scrip]["NON_RETAIL"] = resp_nr.json()
-            except Exception as e:
-                logger.error(f"Error fetching BSE Non-Retail for scrip {scrip}: {e}")
+        async with httpx.AsyncClient(headers=self.headers, timeout=15.0) as client:
+            for scrip, symbol in self.scripcodes.items():
+                results[scrip] = {"NON_RETAIL": None, "RETAIL": None}
+                
+                # Non-Retail
+                try:
+                    params_nr = {"scripcode": scrip, "strflag": "NR"}
+                    resp_nr = await client.get(self.base_url, params=params_nr)
+                    resp_nr.raise_for_status()
+                    # Use a basic check to prevent parsing empty/HTML
+                    if resp_nr.text.startswith('<'):
+                        raise Exception("Received HTML instead of JSON")
+                    results[scrip]["NON_RETAIL"] = resp_nr.json()
+                except Exception as e:
+                    logger.error(f"Error fetching BSE Non-Retail for scrip {scrip}: {e}")
 
-            # Retail (different endpoint base conceptually but we can just use the provided full url params)
-            try:
-                url_r = "https://api.bseindia.com/BseIndiaAPI/api/bsebidofsT_details/w"
-                params_r = {"scripcode": scrip, "strFlag": "R", "flag": "T2"}
-                resp_r = await self.client.get(url_r, params=params_r)
-                resp_r.raise_for_status()
-                if resp_r.text.startswith('<'):
-                    raise Exception("Received HTML instead of JSON")
-                results[scrip]["RETAIL"] = resp_r.json()
-            except Exception as e:
-                logger.error(f"Error fetching BSE Retail for scrip {scrip}: {e}")
+                # Retail (different endpoint base conceptually but we can just use the provided full url params)
+                try:
+                    url_r = "https://api.bseindia.com/BseIndiaAPI/api/bsebidofsT_details/w"
+                    params_r = {"scripcode": scrip, "strFlag": "R", "flag": "T2"}
+                    resp_r = await client.get(url_r, params=params_r)
+                    resp_r.raise_for_status()
+                    if resp_r.text.startswith('<'):
+                        raise Exception("Received HTML instead of JSON")
+                    results[scrip]["RETAIL"] = resp_r.json()
+                except Exception as e:
+                    logger.error(f"Error fetching BSE Retail for scrip {scrip}: {e}")
 
         return results
 
