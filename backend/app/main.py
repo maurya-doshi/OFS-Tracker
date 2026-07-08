@@ -8,12 +8,9 @@ from app.api import router
 
 logger = logging.getLogger(__name__)
 
-# Ensure the data directory exists for SQLite — computed relative to this file
-# so it works regardless of CWD or container environment
-_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-_DATA_DIR = os.path.join(_BASE_DIR, "data")
-os.makedirs(_DATA_DIR, exist_ok=True)
-logger.info(f"Data directory: {_DATA_DIR}")
+# Ensure the data directory exists for SQLite at the absolute path Railway uses
+os.makedirs("/app/data", exist_ok=True)
+logger.info("Data directory: /app/data")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
