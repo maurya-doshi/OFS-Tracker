@@ -1,28 +1,55 @@
 import os
 import logging
+import tempfile
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# ── Determine a writable data directory BEFORE importing any app.* module ────
+# This runs first so pydantic-settings picks up DATABASE_URL when config.py
+# is imported for the first time.
+def _find_data_dir() -> str:
+    candidates = [
+        "/app/data",                          # Docker (root user, WORKDIR /app)
+        os.path.join(os.getcwd(), "data"),    # Nixpacks / relative CWD
+        "/tmp/ofs_data",                       # Always writable fallback
+    ]
+    for path in candidates:
+        try:
+            os.makedirs(path, exist_ok=True)
+            probe = os.path.join(path, ".write_probe")
+            with open(probe, "w") as f:
+                f.write("ok")
+            os.remove(probe)
+            logger.info(f"OFS data directory: {path}")
+            return path
+        except OSError as exc:
+            logger.warning(f"Directory {path!r} not writable: {exc}")
+    fallback = tempfile.mkdtemp(prefix="ofs_data_")
+    logger.warning(f"All candidates failed — using temp dir: {fallback}")
+    return fallback
+
+_DATA_DIR = _find_data_dir()
+os.environ.setdefault("DATABASE_URL", f"sqlite:///{_DATA_DIR}/ofs_tracker.db")
+logger.info(f"DATABASE_URL = {os.environ['DATABASE_URL']}")
+
+# ── App imports (config.py reads DATABASE_URL env var above) ─────────────────
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
 from app.api import router
 
-logger = logging.getLogger(__name__)
-
-# Ensure the data directory exists for SQLite at the absolute path Railway uses
-os.makedirs("/app/data", exist_ok=True)
-logger.info("Data directory: /app/data")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- Startup ---
-    # Create DB tables
     try:
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created/verified.")
     except Exception as e:
         logger.error(f"Failed to initialise database: {e}")
 
-    # Start background scheduler
     try:
         from app.scheduler import start_scheduler, shutdown_scheduler
         start_scheduler()
@@ -38,9 +65,9 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Error during scheduler shutdown: {e}")
 
+
 app = FastAPI(title="OFS Live Bid Tracker API", lifespan=lifespan)
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -50,6 +77,7 @@ app.add_middleware(
 )
 
 app.include_router(router.api_router, prefix="/api")
+
 
 @app.get("/")
 def root():
