@@ -5,8 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
 from app.api import router
 
-# Ensure the data directory exists for SQLite
-os.makedirs("/app/data", exist_ok=True)
+# Ensure the data directory exists for SQLite — computed relative to this file
+# so it works regardless of CWD or container environment
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.makedirs(os.path.join(_BASE_DIR, "data"), exist_ok=True)
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
