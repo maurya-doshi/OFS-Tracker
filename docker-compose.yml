@@ -7,8 +7,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/data:/app/data
-    environment:
-      - DATABASE_URL=sqlite:///./data/ofs_tracker.db
+    # DATABASE_URL is now auto-detected and set securely in app/main.py
 
   frontend:
     build:

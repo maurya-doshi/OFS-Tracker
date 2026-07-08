@@ -30,8 +30,10 @@ def _find_data_dir() -> str:
     return fallback
 
 _DATA_DIR = _find_data_dir()
-os.environ.setdefault("DATABASE_URL", f"sqlite:///{_DATA_DIR}/ofs_tracker.db")
-logger.info(f"DATABASE_URL = {os.environ['DATABASE_URL']}")
+# FORCE overwrite DATABASE_URL. If Railway injected a Postgres URL, setdefault() would 
+# keep it, causing create_engine to crash because psycopg2 isn't installed.
+os.environ["DATABASE_URL"] = f"sqlite:///{_DATA_DIR}/ofs_tracker.db"
+logger.info(f"DATABASE_URL forcefully set to = {os.environ['DATABASE_URL']}")
 
 # ── App imports (config.py reads DATABASE_URL env var above) ─────────────────
 from contextlib import asynccontextmanager
@@ -82,3 +84,11 @@ app.include_router(router.api_router, prefix="/api")
 @app.get("/")
 def root():
     return {"message": "OFS Tracker API is running"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+@app.get("/api/health")
+def api_health_check():
+    return {"status": "ok"}
