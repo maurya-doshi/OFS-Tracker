@@ -1,7 +1,11 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base
 from app.api import router
+
+# Ensure the data directory exists for SQLite
+os.makedirs("data", exist_ok=True)
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
