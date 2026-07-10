@@ -1,10 +1,10 @@
 import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from app.config import settings
-from app.database.database import SessionLocal
-from app.models import models
-from app.collectors.nse import NSECollector
-from app.collectors.bse import BSECollector
+from backend.app.config import settings
+from backend.app.database.database import SessionLocal
+from backend.app.models import models
+from backend.app.collectors.nse import NSECollector
+from backend.app.collectors.bse import BSECollector
 from sqlalchemy import func
 
 logger = logging.getLogger(__name__)

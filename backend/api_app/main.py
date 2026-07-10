@@ -39,8 +39,8 @@ logger.info(f"DATABASE_URL forcefully set to = {os.environ['DATABASE_URL']}")
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database.database import engine, Base
-from app.api import router
+from backend.app.database.database import engine, Base
+from backend.app.api import router
 
 
 @asynccontextmanager
@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
         logger.error(f"Failed to initialise database: {e}")
 
     try:
-        from app.scheduler import start_scheduler, shutdown_scheduler
+        from backend.app.scheduler import start_scheduler, shutdown_scheduler
         start_scheduler()
     except Exception as e:
         logger.error(f"Failed to start scheduler: {e}")

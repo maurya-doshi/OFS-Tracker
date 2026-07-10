@@ -1,5 +1,13 @@
+import sys
+import os
+
+# Ensure the backend directory is in the Python path so absolute imports like 'from app...' work
+backend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend")
+if backend_path not in sys.path:
+    sys.path.insert(0, backend_path)
+
 import gradio as gr
-from backend.app.main import app as fastapi_app
+from api_app.main import app as fastapi_app
 
 # Create a minimal Gradio UI to satisfy Hugging Face's Gradio SDK requirements
 demo = gr.Blocks()

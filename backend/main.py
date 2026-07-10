@@ -1,5 +1,5 @@
 # Proxy to app.main for environments that hardcode `uvicorn main:app` or `python main.py`
-from app.main import app
+from backend.app.main import app
 import os
 import uvicorn
 

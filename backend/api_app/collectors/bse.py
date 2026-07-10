@@ -2,9 +2,9 @@ import httpx
 import logging
 from typing import List, Optional
 from datetime import datetime
-from app.collectors.base import BaseCollector
-from app.schemas.schemas import SnapshotBase
-from app.config import settings
+from backend.app.collectors.base import BaseCollector
+from backend.app.schemas.schemas import SnapshotBase
+from backend.app.config import settings
 
 logger = logging.getLogger(__name__)
 
