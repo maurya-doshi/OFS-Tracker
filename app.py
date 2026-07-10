@@ -9,8 +9,10 @@ if backend_path not in sys.path:
 import gradio as gr
 from api_app.main import app as fastapi_app
 
-# Create a minimal Gradio UI that HF can detect and serve
-with gr.Blocks(title="OFS Tracker API") as demo:
+# Named `_blocks` (not `demo`) so HF's Gradio runner does NOT auto-launch it
+# separately via demo.launch(). Only `app` below is exposed for HF to detect.
+_blocks = gr.Blocks(title="OFS Tracker API")
+with _blocks:
     gr.Markdown("# 📈 OFS Tracker API")
     gr.Markdown(
         "The FastAPI backend is running behind this Gradio Space.\n\n"
@@ -20,10 +22,10 @@ with gr.Blocks(title="OFS Tracker API") as demo:
         "- `GET /docs` — interactive API documentation"
     )
 
-# Mount the FastAPI app under /backend, and expose the Gradio demo at /
-# HF Gradio SDK looks for a top-level `app` ASGI variable or runs `demo.launch()`.
-# Using gr.mount_gradio_app makes `app` the combined ASGI app HF will serve.
-app = gr.mount_gradio_app(fastapi_app, demo, path="/")
+# Mount Gradio at / within the FastAPI ASGI app.
+# HF detects `app` as an ASGI variable and runs it directly with uvicorn —
+# no separate demo.launch() call is made, so there is no port conflict.
+app = gr.mount_gradio_app(fastapi_app, _blocks, path="/")
 
 if __name__ == "__main__":
     import uvicorn
