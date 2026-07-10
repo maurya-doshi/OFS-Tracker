@@ -1,12 +1,24 @@
+# Web framework
 fastapi==0.112.2
-uvicorn==0.50.2
+uvicorn==0.30.6
+
+# HTTP client
 httpx==0.28.1
+
+# Database
 sqlalchemy==2.0.51
 alembic==1.18.5
+
+# Task scheduling
 apscheduler==3.11.3
+
+# Data validation & settings
 pydantic==2.13.4
 pydantic-settings==2.14.2
+
+# Env / utilities
 python-dotenv==1.2.2
 anyio==4.14.1
-gradio
-huggingface-hub<0.24.0
+
+# Gradio (HF Spaces SDK) - must match sdk_version in README
+gradio==5.35.0

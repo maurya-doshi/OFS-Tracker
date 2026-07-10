@@ -81,7 +81,7 @@ app.add_middleware(
 app.include_router(router.api_router, prefix="/api")
 
 
-@app.get("/")
+@app.get("/api/status")
 def root():
     return {"message": "OFS Tracker API is running"}
 
