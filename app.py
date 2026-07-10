@@ -73,7 +73,9 @@ def api_health():
 def api_status():
     return {"message": "OFS Tracker API is running"}
 
-# Use on_event (compatible with Gradio's own on_event hooks on the same app)
+# Use on_event — compatible with mount_gradio_app which also adds on_event handlers.
+# DO NOT use lifespan= on fastapi_app: Starlette 0.40+ raises ValueError if
+# both lifespan= and on_event are present on the same app.
 @fastapi_app.on_event("startup")
 async def _startup():
     try:
