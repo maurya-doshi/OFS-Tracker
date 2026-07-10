@@ -1,5 +1,5 @@
 ---
-title: OFS Tracker API
+title: OFS Tracker
 emoji: 📈
 colorFrom: blue
 colorTo: green
