@@ -2,9 +2,9 @@ import httpx
 import logging
 from typing import List
 from datetime import datetime
-from backend.app.collectors.base import BaseCollector
-from backend.app.schemas.schemas import SnapshotBase
-from backend.app.config import settings
+from api_app.collectors.base import BaseCollector
+from api_app.schemas.schemas import SnapshotBase
+from api_app.config import settings
 import asyncio
 
 logger = logging.getLogger(__name__)

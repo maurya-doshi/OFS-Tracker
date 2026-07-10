@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from backend.app.schemas.schemas import SnapshotBase
+from api_app.schemas.schemas import SnapshotBase
 from datetime import datetime
 
 class BaseCollector(ABC):
