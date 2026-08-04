@@ -3,13 +3,13 @@ services:
     name: ofstracker-backend
     env: docker
     plan: free
-    dockerfilePath: backend/Dockerfile
+    rootDir: backend
 
   - type: web
     name: ofstracker-frontend
     env: docker
     plan: free
-    dockerfilePath: frontend/Dockerfile
+    rootDir: frontend
     envVars:
       - key: NEXT_PUBLIC_API_URL
         # Note: If Render appends a unique hash to your backend URL (e.g., ofstracker-backend-abc1.onrender.com)
