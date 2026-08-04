@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ofstracker-backend
+    env: docker
+    plan: free
+    dockerfilePath: backend/Dockerfile
+
+  - type: web
+    name: ofstracker-frontend
+    env: docker
+    plan: free
+    dockerfilePath: frontend/Dockerfile
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        # Note: If Render appends a unique hash to your backend URL (e.g., ofstracker-backend-abc1.onrender.com)
+        # you will need to update this environment variable in the Render Dashboard after the first deployment.
+        value: https://ofstracker-backend.onrender.com/api
