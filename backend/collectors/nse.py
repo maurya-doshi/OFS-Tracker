@@ -1,4 +1,4 @@
-import httpx
+from curl_cffi.requests import AsyncSession
 import logging
 from typing import List
 from datetime import datetime
@@ -28,7 +28,9 @@ class NSECollector(BaseCollector):
         now = datetime.now()
         date_str = now.strftime("%d-%b-%Y") # e.g. 07-Jul-2026
         
-        async with httpx.AsyncClient(headers=self.headers, timeout=15.0) as client:
+        # impersonate="chrome" makes curl_cffi mimic the Chrome TLS fingerprint,
+        # bypassing NSE's Cloudflare/bot protection that blocks plain httpx/requests.
+        async with AsyncSession(impersonate="chrome", headers=self.headers, timeout=15) as client:
             try:
                 # Fetch base URL to get cookies
                 await client.get(self.base_url)

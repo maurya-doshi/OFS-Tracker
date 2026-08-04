@@ -1,4 +1,4 @@
-import httpx
+from curl_cffi.requests import AsyncSession
 import logging
 from typing import List, Optional
 from datetime import datetime
@@ -27,7 +27,7 @@ class BSECollector(BaseCollector):
 
     async def fetch(self) -> dict:
         results = {}
-        async with httpx.AsyncClient(headers=self.headers, timeout=15.0) as client:
+        async with AsyncSession(impersonate="chrome", headers=self.headers, timeout=15) as client:
             for scrip, symbol in self.scripcodes.items():
                 results[scrip] = {"NON_RETAIL": None, "RETAIL": None}
                 
