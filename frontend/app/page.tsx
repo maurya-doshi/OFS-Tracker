@@ -55,23 +55,34 @@ export default function Dashboard() {
     }
   };
 
-  const { data: ladder, dataUpdatedAt } = useQuery({
+  const { data: ladderData } = useQuery({
     queryKey: ["ladder", issue, investorType],
     queryFn: () => fetchCombinedLadder(issue, investorType),
     refetchInterval: 15000,
     enabled: !!issue,
   });
 
-  const lastUpdatedText = useMemo(() => {
-    if (!dataUpdatedAt) return "";
-    const date = new Date(dataUpdatedAt);
-    return `Last updated on ${date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} | ${date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`;
-  }, [dataUpdatedAt]);
+  const toIST = (utcStr: string | null | undefined) => {
+    if (!utcStr) return null;
+    // Append 'Z' to ensure the string is always parsed as UTC,
+    // even when the backend omits the timezone suffix.
+    const date = new Date(utcStr.endsWith('Z') ? utcStr : utcStr + 'Z');
+    return date.toLocaleTimeString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+  };
+
+  const nseUpdatedText = useMemo(() => toIST(ladderData?.nse_last_updated), [ladderData?.nse_last_updated]);
+  const bseUpdatedText = useMemo(() => toIST(ladderData?.bse_last_updated), [ladderData?.bse_last_updated]);
 
   const displayLadder = useMemo(() => {
-    if (!ladder) return [];
-    return [...ladder].sort((a, b) => sortOrder === 'desc' ? b.price - a.price : a.price - b.price);
-  }, [ladder, sortOrder]);
+    if (!ladderData?.ladder) return [];
+    return [...ladderData.ladder].sort((a, b) => sortOrder === 'desc' ? b.price - a.price : a.price - b.price);
+  }, [ladderData, sortOrder]);
 
   return (
     <div className="min-h-screen p-8 max-w-7xl mx-auto space-y-8">
@@ -160,8 +171,21 @@ export default function Dashboard() {
                     </button>
                   </div>
                 </div>
-                {lastUpdatedText && (
-                  <span className="text-sm text-gray-400">{lastUpdatedText}</span>
+                {(nseUpdatedText || bseUpdatedText) && (
+                  <div className="flex items-center gap-3 text-xs">
+                    {nseUpdatedText && (
+                      <span className="flex items-center gap-1.5 bg-blue-600/10 border border-blue-500/20 text-blue-300 px-3 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                        NSE {nseUpdatedText} IST
+                      </span>
+                    )}
+                    {bseUpdatedText && (
+                      <span className="flex items-center gap-1.5 bg-indigo-600/10 border border-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                        BSE {bseUpdatedText} IST
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
               {displayLadder && displayLadder.length > 0 ? (

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List
+from datetime import timezone
 from database.database import get_db
 from models import models
 from schemas import schemas
@@ -50,7 +51,7 @@ def get_ladder(exchange: str, issue: str, db: Session = Depends(get_db)):
     
     return results
 
-@router.get("/combined", response_model=List[schemas.CombinedLadderEntry])
+@router.get("/combined", response_model=schemas.CombinedLadderResponse)
 def get_combined_ladder(issue: str, investor_type: str = "NON_RETAIL", db: Session = Depends(get_db)):
     # Simple combined ladder implementation
     latest_timestamp_nse = db.query(func.max(models.Snapshot.timestamp)).filter(
@@ -121,8 +122,16 @@ def get_combined_ladder(issue: str, investor_type: str = "NON_RETAIL", db: Sessi
             cumulative_confirmed=cum_conf,
             cumulative_unconfirmed=cum_unc
         ))
+
+    # Attach UTC timezone info so the frontend can reliably convert to any tz
+    def utc(ts):
+        return ts.replace(tzinfo=timezone.utc) if ts else None
         
-    return ladder
+    return schemas.CombinedLadderResponse(
+        nse_last_updated=utc(latest_timestamp_nse),
+        bse_last_updated=utc(latest_timestamp_bse),
+        ladder=ladder
+    )
 
 @router.get("/history", response_model=List[schemas.Aggregate])
 def get_history(exchange: str, issue: str, limit: int = 100, db: Session = Depends(get_db)):

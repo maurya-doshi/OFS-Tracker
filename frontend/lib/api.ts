@@ -33,7 +33,13 @@ export async function fetchLadder(exchange: string, issue: string) {
 export async function fetchCombinedLadder(issue: string, investorType: string = "NON_RETAIL") {
   const res = await fetch(`${API_BASE}/combined?issue=${issue}&investor_type=${investorType}`);
   if (!res.ok) throw new Error("Failed to fetch combined ladder");
-  return res.json();
+  const data = await res.json();
+  // API returns { nse_last_updated, bse_last_updated, ladder }
+  return data as {
+    nse_last_updated: string | null;
+    bse_last_updated: string | null;
+    ladder: any[];
+  };
 }
 
 export async function fetchAnalytics(exchange: string, issue: string) {

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 class IssueBase(BaseModel):
     exchange: str
@@ -75,3 +75,8 @@ class CombinedLadderEntry(BaseModel):
     cumulative_total: int = 0
     cumulative_confirmed: int = 0
     cumulative_unconfirmed: int = 0
+
+class CombinedLadderResponse(BaseModel):
+    nse_last_updated: Optional[datetime] = None
+    bse_last_updated: Optional[datetime] = None
+    ladder: List[CombinedLadderEntry]
