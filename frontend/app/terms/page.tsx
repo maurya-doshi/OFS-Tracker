@@ -50,14 +50,27 @@ export default function TermsAndConditions() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-2">5. GOVERNING LAW</h2>
+            <h2 className="text-xl font-bold mb-2">5. FINANCIAL DISCLAIMER AND DATA ACCURACY</h2>
+            <p>
+              The OFS Tracker aggregates data from the public APIs of the National Stock Exchange of India (NSE) and Bombay Stock Exchange (BSE). We do not control this data. The market data, statistics, and ladder information displayed may be delayed, inaccurate, interrupted, or out of date. 
+            </p>
+            <p className="mt-2">
+              The information provided by us on the Site is for general informational purposes only and does NOT constitute financial, investment, or trading advice. We strongly advise you to verify all pricing, bidding, and stock information independently with the respective exchanges or your registered broker before executing any financial trades or making any investment decisions.
+            </p>
+            <p className="mt-4 font-semibold text-red-500 dark:text-red-400">
+              UNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF THE SITE OR RELIANCE ON ANY INFORMATION PROVIDED ON THE SITE. YOUR USE OF THE SITE AND YOUR RELIANCE ON ANY INFORMATION ON THE SITE IS SOLELY AT YOUR OWN RISK.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-2">6. GOVERNING LAW</h2>
             <p>
               These Terms shall be governed by and defined following the laws of India. MD Broking Private Limited and yourself irrevocably consent that the courts of Rajkot, Gujarat, India shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these terms.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-2">6. CONTACT US</h2>
+            <h2 className="text-xl font-bold mb-2">7. CONTACT US</h2>
             <p>
               In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:
             </p>

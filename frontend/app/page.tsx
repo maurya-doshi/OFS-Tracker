@@ -256,12 +256,6 @@ export default function Dashboard() {
           <Link href="/terms" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
             Terms & Conditions
           </Link>
-          <Link href="/eula" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
-            EULA
-          </Link>
-          <Link href="/disclaimer" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
-            Disclaimer
-          </Link>
         </p>
       </footer>
     </div>
