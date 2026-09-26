@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
 import { fetchCombinedLadder, fetchIssues, createIssue, deleteIssue } from "../lib/api";
 import { ChevronDown, ChevronUp, Plus, Trash2, Activity } from "lucide-react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -242,6 +243,15 @@ export default function Dashboard() {
             </div>
         </div>
       </div>
+
+      <footer className="mt-12 text-center text-sm text-gray-500 pb-8 border-t border-gray-800 pt-8">
+        <p>&copy; {new Date().getFullYear()} OFS Live Bid Tracker. All rights reserved.</p>
+        <p className="mt-2">
+          <Link href="/privacy" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
+            Privacy Policy
+          </Link>
+        </p>
+      </footer>
     </div>
   );
 }
