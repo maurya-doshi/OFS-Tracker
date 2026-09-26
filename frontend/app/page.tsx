@@ -246,9 +246,12 @@ export default function Dashboard() {
 
       <footer className="mt-12 text-center text-sm text-gray-500 pb-8 border-t border-gray-800 pt-8">
         <p>&copy; {new Date().getFullYear()} OFS Live Bid Tracker. All rights reserved.</p>
-        <p className="mt-2">
+        <p className="mt-2 space-x-4">
           <Link href="/privacy" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
             Privacy Policy
+          </Link>
+          <Link href="/cookies" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
+            Cookie Policy
           </Link>
         </p>
       </footer>
