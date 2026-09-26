@@ -6,7 +6,7 @@ export default function CookiePolicy() {
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 md:p-12 text-gray-800 dark:text-gray-200">
         <h1 className="text-3xl font-bold mb-2">COOKIE POLICY</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-          Last updated September 26, 2026
+          Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
 
         <div className="space-y-8">
