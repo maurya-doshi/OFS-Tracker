@@ -17,12 +17,9 @@ def _find_data_dir() -> str:
     for path in candidates:
         try:
             os.makedirs(path, exist_ok=True)
-            probe = os.path.join(path, ".write_probe")
-            with open(probe, "w") as f:
-                f.write("ok")
-            os.remove(probe)
-            logger.info(f"OFS data directory: {path}")
-            return path
+            if os.access(path, os.W_OK):
+                logger.info(f"OFS data directory: {path}")
+                return path
         except OSError as exc:
             logger.warning(f"Directory {path!r} not writable: {exc}")
     fallback = tempfile.mkdtemp(prefix="ofs_data_")
@@ -39,7 +36,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.database import engine, Base
-from api import router
+from api import endpoints
 
 
 @asynccontextmanager
@@ -77,7 +74,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router.api_router, prefix="/api")
+app.include_router(endpoints.router, prefix="/api")
 
 
 @app.get("/api/status")

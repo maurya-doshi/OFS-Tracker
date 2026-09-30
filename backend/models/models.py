@@ -36,12 +36,3 @@ class Aggregate(Base):
     price = Column(Float, index=True)
     quantity = Column(Integer)
 
-class Change(Base):
-    __tablename__ = "changes"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime(timezone=True), index=True)
-    price = Column(Float, index=True)
-    previous_quantity = Column(Integer)
-    current_quantity = Column(Integer)
-    delta = Column(Integer)

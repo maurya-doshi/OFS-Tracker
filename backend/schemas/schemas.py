@@ -9,9 +9,6 @@ class IssueBase(BaseModel):
     name: str
     status: str
 
-class IssueCreate(IssueBase):
-    pass
-
 class Issue(IssueBase):
     id: int
 
@@ -30,39 +27,15 @@ class SnapshotBase(BaseModel):
     unconfirmed_qty: int = 0
     timestamp: datetime
 
-class Snapshot(SnapshotBase):
+class Aggregate(BaseModel):
     id: int
-
-    class Config:
-        from_attributes = True
-
-class AggregateBase(BaseModel):
     exchange: str
     price: float
     quantity: int
     timestamp: datetime
 
-class Aggregate(AggregateBase):
-    id: int
-
     class Config:
         from_attributes = True
-
-class AnalyticsResponse(BaseModel):
-    weighted_average: float
-    highest_bid: float
-    lowest_bid: float
-    total_quantity: int
-    cumulative_demand: List[dict]
-
-class TimeSeriesResponse(BaseModel):
-    timestamp: datetime
-    price: float
-    quantity: int
-
-class LadderEntry(BaseModel):
-    price: float
-    quantity: int
     
 class CombinedLadderEntry(BaseModel):
     price: float

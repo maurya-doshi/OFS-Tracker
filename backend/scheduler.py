@@ -6,6 +6,7 @@ from models import models
 from collectors.nse import NSECollector
 from collectors.bse import BSECollector
 from sqlalchemy import func
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,6 @@ async def poll_exchanges():
             
         # Simplistic aggregation: group by exchange, timestamp, price
         # Actually, we should aggregate everything we just fetched.
-        from collections import defaultdict
         agg_map = defaultdict(int)
         for s in all_snapshots:
             key = (s.exchange, s.timestamp, s.price)

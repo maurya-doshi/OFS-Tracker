@@ -14,7 +14,7 @@ def get_issues(db: Session = Depends(get_db)):
     return db.query(models.Issue).all()
 
 @router.post("/issues", response_model=schemas.Issue)
-def create_issue(issue: schemas.IssueCreate, db: Session = Depends(get_db)):
+def create_issue(issue: schemas.IssueBase, db: Session = Depends(get_db)):
     db_issue = models.Issue(**issue.dict())
     db.add(db_issue)
     db.commit()
@@ -29,27 +29,6 @@ def delete_issue(issue_id: int, db: Session = Depends(get_db)):
     db.delete(db_issue)
     db.commit()
     return {"message": "Issue deleted"}
-
-@router.get("/ladder", response_model=List[schemas.LadderEntry])
-def get_ladder(exchange: str, issue: str, db: Session = Depends(get_db)):
-    latest_timestamp = db.query(func.max(models.Snapshot.timestamp)).filter(
-        models.Snapshot.exchange == exchange,
-        models.Snapshot.issue == issue
-    ).scalar()
-    
-    if not latest_timestamp:
-        return []
-        
-    results = db.query(
-        models.Snapshot.price,
-        func.sum(models.Snapshot.quantity).label("quantity")
-    ).filter(
-        models.Snapshot.exchange == exchange,
-        models.Snapshot.issue == issue,
-        models.Snapshot.timestamp == latest_timestamp
-    ).group_by(models.Snapshot.price).order_by(models.Snapshot.price.desc()).all()
-    
-    return results
 
 @router.get("/combined", response_model=schemas.CombinedLadderResponse)
 def get_combined_ladder(issue: str, investor_type: str = "NON_RETAIL", db: Session = Depends(get_db)):
@@ -133,69 +112,3 @@ def get_combined_ladder(issue: str, investor_type: str = "NON_RETAIL", db: Sessi
         ladder=ladder
     )
 
-@router.get("/history", response_model=List[schemas.Aggregate])
-def get_history(exchange: str, issue: str, limit: int = 100, db: Session = Depends(get_db)):
-    # Returns latest aggregates
-    return db.query(models.Aggregate).filter(
-        models.Aggregate.exchange == exchange
-    ).order_by(models.Aggregate.timestamp.desc()).limit(limit).all()
-
-@router.get("/analytics", response_model=schemas.AnalyticsResponse)
-def get_analytics(issue: str, exchange: str = "BOTH", db: Session = Depends(get_db)):
-    query = db.query(models.Snapshot).filter(models.Snapshot.issue == issue)
-    
-    if exchange != "BOTH":
-        query = query.filter(models.Snapshot.exchange == exchange)
-        
-    latest_timestamp = db.query(func.max(models.Snapshot.timestamp)).filter(models.Snapshot.issue == issue).scalar()
-    
-    if not latest_timestamp:
-        return schemas.AnalyticsResponse(
-            weighted_average=0, highest_bid=0, lowest_bid=0, total_quantity=0, cumulative_demand=[]
-        )
-        
-    snapshots = query.filter(models.Snapshot.timestamp == latest_timestamp).all()
-    
-    if not snapshots:
-        return schemas.AnalyticsResponse(
-            weighted_average=0, highest_bid=0, lowest_bid=0, total_quantity=0, cumulative_demand=[]
-        )
-        
-    total_qty = sum(s.quantity for s in snapshots)
-    weighted_sum = sum(s.quantity * s.price for s in snapshots)
-    wa = weighted_sum / total_qty if total_qty > 0 else 0
-    highest = max(s.price for s in snapshots)
-    lowest = min(s.price for s in snapshots)
-    
-    # Cumulative demand
-    price_groups = {}
-    for s in snapshots:
-        price_groups[s.price] = price_groups.get(s.price, 0) + s.quantity
-        
-    sorted_prices = sorted(price_groups.keys(), reverse=True)
-    cumulative = []
-    running_total = 0
-    for p in sorted_prices:
-        running_total += price_groups[p]
-        cumulative.append({"price": p, "cumulative_quantity": running_total})
-        
-    return schemas.AnalyticsResponse(
-        weighted_average=wa,
-        highest_bid=highest,
-        lowest_bid=lowest,
-        total_quantity=total_qty,
-        cumulative_demand=cumulative
-    )
-
-@router.get("/timeseries", response_model=List[schemas.TimeSeriesResponse])
-def get_timeseries(issue: str, exchange: str = "BOTH", db: Session = Depends(get_db)):
-    query = db.query(
-        models.Snapshot.timestamp,
-        models.Snapshot.price,
-        func.sum(models.Snapshot.quantity).label("quantity")
-    ).filter(models.Snapshot.issue == issue)
-    
-    if exchange != "BOTH":
-        query = query.filter(models.Snapshot.exchange == exchange)
-        
-    return query.group_by(models.Snapshot.timestamp, models.Snapshot.price).order_by(models.Snapshot.timestamp.asc()).all()
