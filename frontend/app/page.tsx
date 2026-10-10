@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { fetchCombinedLadder, fetchIssues, createIssue, deleteIssue } from "../lib/api";
 import { Activity, Clock, Trash2, ArrowDown, ArrowUp } from "lucide-react";
+import Link from "next/link";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -334,6 +335,20 @@ export default function Dashboard() {
         </aside>
 
       </div>
+      <footer className="mt-12 text-center text-sm text-gray-500 pb-8 border-t border-gray-800 pt-8">
+          <p>&copy; {new Date().getFullYear()} OFS Live Bid Tracker. All rights reserved.</p>
+          <p className="mt-2 space-x-4">
+            <Link href="/privacy" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
+              Privacy Policy
+            </Link>
+            <Link href="/cookies" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
+              Cookie Policy
+            </Link>
+            <Link href="/terms" className="hover:text-gray-300 transition-colors underline decoration-gray-700 underline-offset-4">
+              Terms & Conditions
+            </Link>
+          </p>
+      </footer>
     </div>
   );
 }
