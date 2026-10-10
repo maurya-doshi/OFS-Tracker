@@ -19,7 +19,6 @@ class SnapshotBase(BaseModel):
     exchange: str
     issue: str
     investor_type: str = "NON_RETAIL"
-    category: str
     price: float
     quantity: int
     bids: int = 0
@@ -27,15 +26,7 @@ class SnapshotBase(BaseModel):
     unconfirmed_qty: int = 0
     timestamp: datetime
 
-class Aggregate(BaseModel):
-    id: int
-    exchange: str
-    price: float
-    quantity: int
-    timestamp: datetime
 
-    class Config:
-        from_attributes = True
     
 class CombinedLadderEntry(BaseModel):
     price: float

@@ -5,31 +5,7 @@ import tempfile
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ── Determine a writable data directory BEFORE importing any app.* module ────
-# This runs first so pydantic-settings picks up DATABASE_URL when config.py
-# is imported for the first time.
-def _find_data_dir() -> str:
-    candidates = [
-        "/app/data",                          # Docker
-        os.path.join(os.getcwd(), "data"),    # Relative CWD
-        "/tmp/ofs_data",                       # Always writable fallback
-    ]
-    for path in candidates:
-        try:
-            os.makedirs(path, exist_ok=True)
-            if os.access(path, os.W_OK):
-                logger.info(f"OFS data directory: {path}")
-                return path
-        except OSError as exc:
-            logger.warning(f"Directory {path!r} not writable: {exc}")
-    fallback = tempfile.mkdtemp(prefix="ofs_data_")
-    logger.warning(f"All candidates failed — using temp dir: {fallback}")
-    return fallback
-
-_DATA_DIR = _find_data_dir()
-# FORCE overwrite DATABASE_URL.
-os.environ["DATABASE_URL"] = f"sqlite:///{_DATA_DIR}/ofs_tracker.db"
-logger.info(f"DATABASE_URL forcefully set to = {os.environ['DATABASE_URL']}")
+# Trust DATABASE_URL from the environment for deployment compatibility.
 
 # ── App imports (config.py reads DATABASE_URL env var above) ─────────────────
 from contextlib import asynccontextmanager
@@ -80,14 +56,6 @@ app.include_router(endpoints.router, prefix="/api")
 @app.get("/api/status")
 def root():
     return {"message": "OFS Tracker API is running"}
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
-
-@app.get("/api/health")
-def api_health_check():
-    return {"status": "ok"}
 
 from fastapi.staticfiles import StaticFiles
 

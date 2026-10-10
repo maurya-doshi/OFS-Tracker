@@ -1,89 +1,120 @@
 import React from "react";
+import LegalLayout from "../_components/LegalLayout";
 
 export default function TermsAndConditions() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 md:p-12 text-gray-800 dark:text-gray-200">
-        <h1 className="text-3xl font-bold mb-2">TERMS AND CONDITIONS</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-          Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
+    <LegalLayout title="Terms and conditions">
+      <div className="space-y-8 text-sm leading-relaxed">
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">1. Agreement to terms</h2>
+          <p className="mb-3 text-gray-400">
+            These Terms and Conditions constitute a legally binding agreement between you and{" "}
+            <strong className="text-gray-300">MD Broking Private Limited</strong> ("we," "us," or
+            "our"), concerning your access to and use of{" "}
+            <a
+              href="https://ofs-tracker.onrender.com"
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-2 transition-colors"
+            >
+              https://ofs-tracker.onrender.com
+            </a>
+            .
+          </p>
+          <p className="text-gray-400">
+            By accessing the site, you agree that you have read, understood, and agreed to be
+            bound by all of these Terms and Conditions. If you do not agree, you must discontinue
+            use immediately.
+          </p>
+        </section>
 
-        <div className="space-y-6">
-          <section>
-            <h2 className="text-xl font-bold mb-2">1. AGREEMENT TO TERMS</h2>
-            <p>
-              These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and MD Broking Private Limited ("we," "us," or "our"), concerning your access to and use of the OFS Tracker website (https://ofs-tracker.onrender.com) as well as any other media form, media channel, mobile website, or mobile application related, linked, or otherwise connected thereto (collectively, the "Site").
-            </p>
-            <p className="mt-2">
-              By accessing the Site, you agree that you have read, understood, and agreed to be bound by all of these Terms and Conditions. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS AND CONDITIONS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST DISCONTINUE USE IMMEDIATELY.
-            </p>
-          </section>
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">2. Intellectual property rights</h2>
+          <p className="text-gray-400">
+            Unless otherwise indicated, the site is our proprietary property and all source code,
+            databases, functionality, software, website designs, text, and graphics are owned or
+            controlled by us, and are protected by copyright and trademark laws.
+          </p>
+        </section>
 
-          <section>
-            <h2 className="text-xl font-bold mb-2">2. INTELLECTUAL PROPERTY RIGHTS</h2>
-            <p>
-              Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the "Content") and the trademarks, service marks, and logos contained therein (the "Marks") are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws and various other intellectual property rights.
-            </p>
-          </section>
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">3. Prohibited activities</h2>
+          <p className="mb-2 text-gray-400">
+            You may not access or use the site for any purpose other than that for which we make
+            it available. Prohibited activities include:
+          </p>
+          <ul className="list-disc pl-5 mt-2 space-y-1.5 text-gray-400">
+            <li>Systematically retrieving data to create a collection or database without permission.</li>
+            <li>Circumventing, disabling, or interfering with security-related features of the site.</li>
+            <li>Engaging in unauthorised framing of or linking to the site.</li>
+            <li>Interfering with or disrupting the site or connected networks.</li>
+            <li>Decompiling, disassembling, or reverse engineering any software on the site.</li>
+            <li>Using any automated system including spiders, robots, or scrapers to access the site.</li>
+          </ul>
+        </section>
 
-          <section>
-            <h2 className="text-xl font-bold mb-2">3. PROHIBITED ACTIVITIES</h2>
-            <p>
-              You may not access or use the Site for any purpose other than that for which we make the Site available. The Site may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li>Systematically retrieve data or other content from the Site to create or compile, directly or indirectly, a collection, compilation, database, or directory without written permission from us.</li>
-              <li>Circumvent, disable, or otherwise interfere with security-related features of the Site.</li>
-              <li>Engage in unauthorized framing of or linking to the Site.</li>
-              <li>Interfere with, disrupt, or create an undue burden on the Site or the networks or services connected to the Site.</li>
-              <li>Decipher, decompile, disassemble, or reverse engineer any of the software comprising or in any way making up a part of the Site.</li>
-              <li>Use any automated system, including without limitation, any spider, robot, cheat utility, scraper, or offline reader that accesses the Site.</li>
-            </ul>
-          </section>
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">4. Site management and modifications</h2>
+          <p className="text-gray-400">
+            We reserve the right to monitor the site for violations, take legal action against
+            those who violate the law or these terms, refuse or restrict access, and otherwise
+            manage the site to protect our rights and property.
+          </p>
+        </section>
 
-          <section>
-            <h2 className="text-xl font-bold mb-2">4. SITE MANAGEMENT AND MODIFICATIONS</h2>
-            <p>
-              We reserve the right, but not the obligation, to: (1) monitor the Site for violations of these Terms and Conditions; (2) take appropriate legal action against anyone who, in our sole discretion, violates the law or these Terms and Conditions; (3) refuse, restrict access to, limit the availability of, or disable (to the extent technologically feasible) any of your Contributions or any portion thereof; (4) otherwise manage the Site in a manner designed to protect our rights and property and to facilitate the proper functioning of the Site.
-            </p>
-          </section>
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">
+            5. Financial disclaimer and data accuracy
+          </h2>
+          <p className="mb-3 text-gray-400">
+            The OFS Tracker aggregates data from public APIs of NSE and BSE. We do not control
+            this data. The market data, statistics, and ladder information displayed may be
+            delayed, inaccurate, interrupted, or out of date.
+          </p>
+          <p className="mb-3 text-gray-400">
+            The information provided is for general informational purposes only and does{" "}
+            <strong className="text-gray-300">not</strong> constitute financial, investment, or
+            trading advice. Verify all pricing and bidding information independently with the
+            respective exchanges or your registered broker before making any financial decisions.
+          </p>
+          <p className="font-medium text-red-400 bg-red-500/8 border border-red-500/20 rounded-lg px-4 py-3">
+            Under no circumstance shall we have any liability for any loss or damage incurred as a
+            result of using the site or relying on any information provided. Your use of the site
+            is solely at your own risk.
+          </p>
+        </section>
 
-          <section>
-            <h2 className="text-xl font-bold mb-2">5. FINANCIAL DISCLAIMER AND DATA ACCURACY</h2>
-            <p>
-              The OFS Tracker aggregates data from the public APIs of the National Stock Exchange of India (NSE) and Bombay Stock Exchange (BSE). We do not control this data. The market data, statistics, and ladder information displayed may be delayed, inaccurate, interrupted, or out of date. 
-            </p>
-            <p className="mt-2">
-              The information provided by us on the Site is for general informational purposes only and does NOT constitute financial, investment, or trading advice. We strongly advise you to verify all pricing, bidding, and stock information independently with the respective exchanges or your registered broker before executing any financial trades or making any investment decisions.
-            </p>
-            <p className="mt-4 font-semibold text-red-500 dark:text-red-400">
-              UNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF THE SITE OR RELIANCE ON ANY INFORMATION PROVIDED ON THE SITE. YOUR USE OF THE SITE AND YOUR RELIANCE ON ANY INFORMATION ON THE SITE IS SOLELY AT YOUR OWN RISK.
-            </p>
-          </section>
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">6. Governing law</h2>
+          <p className="text-gray-400">
+            These Terms shall be governed by the laws of India. MD Broking Private Limited and
+            yourself irrevocably consent to the exclusive jurisdiction of the courts of Rajkot,
+            Gujarat, India to resolve any dispute arising in connection with these terms.
+          </p>
+        </section>
 
-          <section>
-            <h2 className="text-xl font-bold mb-2">6. GOVERNING LAW</h2>
-            <p>
-              These Terms shall be governed by and defined following the laws of India. MD Broking Private Limited and yourself irrevocably consent that the courts of Rajkot, Gujarat, India shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these terms.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold mb-2">7. CONTACT US</h2>
-            <p>
-              In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:
-            </p>
-            <address className="mt-4 not-italic bg-gray-100 dark:bg-gray-700 p-4 rounded-md">
-              MD Broking Private Limited<br />
-              Office No. 401, 4th Floor, Gandhi Bhavan<br />
-              Rajkot, Gujarat 360001<br />
-              India<br />
-              Email: mauryadoshi@gmail.com
-            </address>
-          </section>
-        </div>
+        <section>
+          <h2 className="text-base font-semibold text-white mb-3">7. Contact us</h2>
+          <p className="mb-3 text-gray-400">
+            To resolve a complaint or receive further information regarding use of the site:
+          </p>
+          <address className="not-italic bg-gray-800/50 border border-gray-700/50 p-4 rounded-lg text-gray-400">
+            MD Broking Private Limited
+            <br />
+            Office No. 401, 4th Floor, Gandhi Bhavan
+            <br />
+            Rajkot, Gujarat 360001
+            <br />
+            India
+            <br />
+            <a
+              href="mailto:mauryadoshi@gmail.com"
+              className="text-emerald-500 hover:text-emerald-400 underline underline-offset-2 transition-colors"
+            >
+              mauryadoshi@gmail.com
+            </a>
+          </address>
+        </section>
       </div>
-    </div>
+    </LegalLayout>
   );
 }
+

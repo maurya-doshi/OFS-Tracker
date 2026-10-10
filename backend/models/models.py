@@ -20,19 +20,11 @@ class Snapshot(Base):
     exchange = Column(String, index=True)
     issue = Column(String, index=True)
     investor_type = Column(String, default="NON_RETAIL")
-    category = Column(String, index=True)
     price = Column(Float, index=True)
     quantity = Column(Integer)
     bids = Column(Integer, default=0)
     confirmed_qty = Column(Integer, default=0)
     unconfirmed_qty = Column(Integer, default=0)
 
-class Aggregate(Base):
-    __tablename__ = "aggregates"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime(timezone=True), index=True)
-    exchange = Column(String, index=True)
-    price = Column(Float, index=True)
-    quantity = Column(Integer)
+
 

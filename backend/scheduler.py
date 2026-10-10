@@ -1,12 +1,10 @@
 import logging
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from config import settings
+import asyncio
+import os
 from database.database import SessionLocal
 from models import models
-from collectors.nse import NSECollector
-from collectors.bse import BSECollector
-from sqlalchemy import func
-from collections import defaultdict
+from collectors.nse import fetch_nse
+from collectors.bse import fetch_bse
 
 logger = logging.getLogger(__name__)
 
@@ -14,18 +12,12 @@ async def poll_exchanges():
     logger.info("Starting polling cycle")
     db = SessionLocal()
     try:
-        # 1. Fetch active issues
         active_issues = db.query(models.Issue).filter(models.Issue.status == "ACTIVE").all()
         nse_symbols = [i.symbol for i in active_issues if i.symbol]
         bse_scripcodes = {i.scripcode: i.symbol for i in active_issues if i.scripcode}
         
-        # 2. Fetch NSE
-        nse_collector = NSECollector(symbols=nse_symbols)
-        nse_snapshots = await nse_collector.collect()
-        
-        # 3. Fetch BSE
-        bse_collector = BSECollector(scripcodes=bse_scripcodes)
-        bse_snapshots = await bse_collector.collect()
+        nse_snapshots = await fetch_nse(nse_symbols)
+        bse_snapshots = await fetch_bse(bse_scripcodes)
         
         all_snapshots = nse_snapshots + bse_snapshots
         
@@ -33,65 +25,33 @@ async def poll_exchanges():
             logger.info("No snapshots collected.")
             return
 
-        # 3. Validation & 4. Normalize (Handled in collectors)
-        # 5. Store snapshot
-        snapshot_records = []
-        for s in all_snapshots:
-            record = models.Snapshot(**s.model_dump())
-            snapshot_records.append(record)
-            
+        snapshot_records = [models.Snapshot(**s.model_dump()) for s in all_snapshots]
         db.bulk_save_objects(snapshot_records)
         db.commit()
 
-        # 6. Update aggregates
-        for s in all_snapshots:
-            # Aggregate logic: aggregate quantities by price per exchange per timestamp
-            pass
-            
-        # Simplistic aggregation: group by exchange, timestamp, price
-        # Actually, we should aggregate everything we just fetched.
-        agg_map = defaultdict(int)
-        for s in all_snapshots:
-            key = (s.exchange, s.timestamp, s.price)
-            agg_map[key] += s.quantity
-            
-        agg_records = []
-        for (exc, ts, px), qty in agg_map.items():
-            agg_records.append(models.Aggregate(
-                timestamp=ts,
-                exchange=exc,
-                price=px,
-                quantity=qty
-            ))
-            
-        db.bulk_save_objects(agg_records)
-        db.commit()
-
-        # 7. Compute diff
-        # Compare with previous snapshot
-        # For simplicity, we can do this per exchange and price
-        # skipping complex diff for now to keep it straightforward
-        # or implement a basic version:
-        
-        logger.info(f"Polling cycle completed. Stored {len(snapshot_records)} snapshots and {len(agg_records)} aggregates.")
-
+        logger.info(f"Polling cycle completed. Stored {len(snapshot_records)} snapshots.")
     except Exception as e:
         logger.error(f"Error during polling cycle: {e}")
     finally:
         db.close()
 
-_scheduler = None
+_scheduler_task = None
+
+async def _scheduler_loop(interval: int):
+    while True:
+        await poll_exchanges()
+        await asyncio.sleep(interval)
 
 def start_scheduler():
-    global _scheduler
-    _scheduler = AsyncIOScheduler()
-    _scheduler.add_job(poll_exchanges, 'interval', seconds=settings.POLL_INTERVAL)
-    _scheduler.start()
-    logger.info(f"Scheduler started with {settings.POLL_INTERVAL} seconds interval.")
+    global _scheduler_task
+    interval = int(os.environ.get("POLL_INTERVAL", 15))
+    loop = asyncio.get_running_loop()
+    _scheduler_task = loop.create_task(_scheduler_loop(interval))
+    logger.info(f"Scheduler started natively with {interval} seconds interval.")
 
 def shutdown_scheduler():
-    global _scheduler
-    if _scheduler and _scheduler.running:
-        _scheduler.shutdown(wait=False)
+    global _scheduler_task
+    if _scheduler_task and not _scheduler_task.done():
+        _scheduler_task.cancel()
         logger.info("Scheduler shut down.")
 

@@ -32,4 +32,4 @@ COPY --from=frontend-builder /app/frontend/out ./frontend/out
 RUN mkdir -p /app/data
 
 # Run the FastAPI server
-CMD ["python", "run.py"]
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
